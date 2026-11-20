@@ -22,7 +22,7 @@ npm install
 npm run dev        # http://127.0.0.1:3100/zh
 ```
 
-生产模式：`npm run build && npm start`。前端把 `/api/v1/*` 反向代理到 `127.0.0.1:8100`。
+生产构建：`npm run build`，静态产物在 `out/`。问答请求由根目录 `api/ask.ts`（Vercel Function）处理，不再反代本地 API。
 
 ## 内容更新流程
 
@@ -46,12 +46,13 @@ web/
 │  ├─ ask/                     # 问答（静态页 → /api/ask 函数）
 │  └─ sources/                 # 参考书目
 ├─ components/                 # Header / CountryIndex / CountryGallery / FlavorExplorer / AskClient
-├─ netlify/functions/          # ask.ts + seed.json
 ├─ lib/
 │  ├─ i18n.ts                  # 三语字典
 │  └─ data.ts                  # 编辑内容源（导 seed 用）
 └─ scripts/export-seed.ts
 ```
+
+根目录还有两个平台文件：`api/ask.ts`（Vercel 入口）与 `lib/ask-core.ts` + `lib/ask-seed.json`（检索与校验核心）。
 
 ## 问答链路
 
@@ -67,4 +68,4 @@ web/
 - 内容为编辑样例，评分是主观判断；页头有演示横幅。
 - 检索是关键词 + 规则，没有向量检索；事实超过千条后应上 embedding。
 - 11 份来源：8 份官方/国际组织 + 3 份第三方（菲律宾、老挝、缅甸）；第三方层级在页面标注。官方来源快照仅本地保存。
-- 无鉴权、限流、审核后台；admin 页在静态化时已移除，线上模型改走 Netlify 环境变量。
+- 无鉴权、限流、审核后台；admin 页在静态化时已移除，线上模型改走 Vercel 环境变量。

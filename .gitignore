@@ -6,8 +6,9 @@ node_modules/
 .next/
 out/
 
-# Netlify
+# deployment artifacts
 .netlify/
+.vercel/
 
 # Python
 .venv/

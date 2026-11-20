@@ -9,21 +9,20 @@
 | [`screenshots/`](screenshots/) | 桌面与移动端截图 |
 | [`SPEC.md`](SPEC.md) | 最初的产品规格（政策版），页面结构与契约仍被沿用 |
 
-## 线上地址（Netlify）
-
-**https://papaya-flan-b5d63a.netlify.app**
+## 部署（Vercel）
 
 - 前端：Next.js 静态导出（`output: "export"` → `web/out`），三语页面、十国档案、对比表
-- 问答：Netlify Function `web/netlify/functions/ask.ts`，对外路径 `/api/ask`（检索 + 抽取式回答 + 逐句引用校验）
-- 数据：`web/netlify/functions/seed.json` 随函数打包；内容更新后需重新复制
-- 模型：在 Netlify 站点环境变量里设置 `LLM_BASE_URL` / `LLM_API_KEY` / `LLM_MODEL`，函数会自动改用模型；不设置则为抽取式
+- 问答：Vercel Function `api/ask.ts`，对外路径 `/api/ask`；检索与引用校验核心在 `lib/ask-core.ts`
+- 数据：`lib/ask-seed.json` 随函数打包；内容更新后需重新复制
+- 模型：在 Vercel 项目环境变量里设置 `LLM_BASE_URL` / `LLM_API_KEY` / `LLM_MODEL`，不设置则为抽取式
+- Hobby 计划函数上限约 10 秒，模型调用超时默认 8 秒，可用 `ASK_LLM_TIMEOUT_MS` 调整
 - 线上版不含：FastAPI 常驻服务、SQLite 快照存档、模型配置页；这些只在本地版提供
-- 重新部署：`set NETLIFY_AUTH_TOKEN=...` 后运行 `netlify deploy --prod`（站点已 link）
+- 部署：GitHub 导入 Vercel，`vercel.json` 已配置构建、静态输出、函数和根路径重定向
 
 ## 源码与上传
 
 - [`CODE_FILES.md`](CODE_FILES.md)：目录结构与关键文件说明
-- [`GITHUB_DEPLOY.md`](GITHUB_DEPLOY.md)：上传 GitHub、Netlify 构建配置
+- [`GITHUB_DEPLOY.md`](GITHUB_DEPLOY.md)：上传 GitHub、Vercel 导入配置
 
 ## 快速开始
 
@@ -52,7 +51,7 @@ npm run dev     # http://127.0.0.1:3100/zh
 说明：
 
 - 网页端口 `3100` 对局域网开放；API 单独监听 `127.0.0.1:8100`，供本地脚本/开发使用
-- 线上版是静态导出（`web/out`）+ Netlify Function，不依赖 FastAPI 常驻进程
+- 线上版是静态导出（`web/out`）+ Vercel Function，不依赖 FastAPI 常驻进程
 - 启动后关闭那个黑色窗口不会停服务；需要停止时用停止脚本。
 - 换了 Wi-Fi 或 IP 变了，重新双击启动脚本即可生成新二维码。
 - 如果手机打不开：多半是 Wi-Fi 开了「客户端隔离 / AP 隔离」或用了访客网络。可改用**手机热点**（让电脑连手机热点）或 USB 网络共享；也可以让我配一条 Cloudflare 临时隧道拿公网地址。
@@ -60,30 +59,28 @@ npm run dev     # http://127.0.0.1:3100/zh
 
 ## 配置问答模型（可选）
 
-线上在 **Netlify → Site configuration → Environment variables** 添加：
+线上在 **Vercel → Project Settings → Environment Variables** 添加：
 
 ```text
 LLM_BASE_URL=https://api.deepseek.com/v1
 LLM_MODEL=deepseek-chat
 LLM_API_KEY=sk-...
+ASK_LLM_TIMEOUT_MS=8000
 ```
 
 函数会在下一次请求时自动改用模型；不配置则使用抽取式回答。本地 FastAPI 也读取同名环境变量。
 
 ## 重新部署
 
-Netlify 的 production 部署被 **deploy lock** 锁住时，`netlify deploy --prod` 会返回 403；如果 API 返回 `Account credit usage exceeded - new deploys are blocked until credits are added`，说明账户额度已用尽，需要先在 Netlify Billing 里补充额度/升级，代码与 token 都没有问题。
+推送到 GitHub 后 Vercel 自动构建；也可以在 Vercel 项目的 **Deployments → Redeploy** 手动触发。
 
-额度正常时可用 draft + restore：
+本地验证：
 
-```powershell
-# 1. 先做 draft 部署
-npx netlify-cli deploy --site 3f0a021f-fc7d-4eb4-bc47-ae1e945413b5
-
-# 2. 把 draft 发布到 production（替换 <deploy-id>）
-curl -X POST -H "Authorization: Bearer <token>" ^
-  https://api.netlify.com/api/v1/sites/3f0a021f-fc7d-4eb4-bc47-ae1e945413b5/deploys/<deploy-id>/restore
+```bash
+npm run build        # 根目录执行，内部会 cd web && npm ci && npm run build
 ```
+
+如果升级到 Vercel Pro，可把 `vercel.json` 里 `api/ask.ts` 的 `maxDuration` 从 10 调到 30，并同步提高 `ASK_LLM_TIMEOUT_MS`。
 
 ## 现在能做什么
 
@@ -91,7 +88,7 @@ curl -X POST -H "Authorization: Bearer <token>" ^
 - 风物对比、带引用问答（检索 → 生成 → 逐句校验）、可点开的风味速查（介绍 + 图片 + 来源）
 - 11 份来源：8 份官方/国际组织 + 3 份第三方；官方来源保留本地快照与 SHA-256 存档
 - 十国各有一张本地 SVG 旅行海报，首页使用同一套素材做背景
-- 未配置模型时走抽取式模板；线上配置 Netlify 环境变量 `LLM_*` 后自动改用模型
+- 未配置模型时走抽取式模板；线上配置 Vercel 环境变量 `LLM_*` 后自动改用模型
 
 ## 数据流
 
@@ -99,7 +96,7 @@ curl -X POST -H "Authorization: Bearer <token>" ^
 web/lib/data.ts --npm run export:seed--> server/seed.json
         --启动重建--> server/content.db --FastAPI--> 本地 web
 
-server/seed.json --copy--> web/netlify/functions/seed.json --> Netlify Function /api/ask
+server/seed.json --copy--> lib/ask-seed.json --> Vercel Function /api/ask
 ```
 
 内容只在 `data.ts` 里改一处，导出后 API 与前端同时更新。

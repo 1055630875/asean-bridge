@@ -1,4 +1,4 @@
-import seed from "./seed.json";
+import seed from "./ask-seed.json";
 
 type Lang = "zh" | "en" | "id";
 type L10n = Record<string, string>;
@@ -483,7 +483,11 @@ async function callLLM(
   ];
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 45000);
+  const timeoutMs = Number(process.env.ASK_LLM_TIMEOUT_MS ?? "8000");
+  const timeout = setTimeout(
+    () => controller.abort(),
+    Number.isFinite(timeoutMs) ? timeoutMs : 8000,
+  );
   try {
     const res = await fetch(`${base.replace(/\/$/, "")}/chat/completions`, {
       method: "POST",
@@ -526,7 +530,7 @@ function json(statusCode: number, body: unknown) {
   };
 }
 
-export const handler = async (event: any) => {
+export const askHandler = async (event: any) => {
   const started = Date.now();
   if (event.httpMethod !== "POST") {
     return json(405, { error: "method not allowed" });
