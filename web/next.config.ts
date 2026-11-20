@@ -1,9 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  async redirects() {
-    return [{ source: "/", destination: "/zh", permanent: false }];
-  },
+  output: "export",
+  trailingSlash: true,
+  images: { unoptimized: true },
 };
 
 export default nextConfig;

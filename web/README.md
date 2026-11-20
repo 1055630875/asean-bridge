@@ -22,7 +22,7 @@ npm install
 npm run dev        # http://127.0.0.1:3100/zh
 ```
 
-生产构建：`npm run build`，Vercel 使用 `.next` 输出；问答由 `app/api/ask/route.ts` 提供。
+生产构建：`npm run build`，静态产物在 `out/`；问答由仓库根目录 `functions/api/ask.ts` 提供。
 
 ## 内容更新流程
 
@@ -39,7 +39,6 @@ npm run export:seed     # 2. 导出 server/seed.json
 
 ```
 web/
-├─ app/api/ask/route.ts        # /api/ask（Vercel Node 函数）
 ├─ app/[lang]/                 # zh / en / id
 │  ├─ page.tsx                 # 首页（Banner / 主题索引 / 十国 / 影像带 / 方法论）
 │  ├─ countries/               # 十国列表 + [code] 风物页
@@ -55,7 +54,7 @@ web/
 └─ scripts/export-seed.ts
 ```
 
-Vercel 部署时把 **Root Directory** 设为 `web`，Framework 自动识别 Next.js。
+Cloudflare Pages 构建时：Build command `cd web && npm ci && npm run build`，Build output `web/out`，Functions 使用仓库根目录的 `functions/`。
 
 ## 问答链路
 
@@ -71,4 +70,4 @@ Vercel 部署时把 **Root Directory** 设为 `web`，Framework 自动识别 Nex
 - 内容为编辑样例，评分是主观判断；页头有演示横幅。
 - 检索是关键词 + 规则，没有向量检索；事实超过千条后应上 embedding。
 - 11 份来源：8 份官方/国际组织 + 3 份第三方（菲律宾、老挝、缅甸）；第三方层级在页面标注。官方来源快照仅本地保存。
-- 无鉴权、限流、审核后台；admin 页在静态化时已移除，线上模型改走 Vercel 环境变量。
+- 无鉴权、限流、审核后台；admin 页在静态化时已移除，线上模型改走 Cloudflare 环境变量。

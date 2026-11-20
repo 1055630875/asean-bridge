@@ -454,10 +454,11 @@ async function callLLM(
   question: string,
   lang: Lang,
   facts: PublicFact[],
+  env: Record<string, string | undefined>,
 ): Promise<{ content: string | null; error: string | null }> {
-  const base = process.env.LLM_BASE_URL;
-  const key = process.env.LLM_API_KEY;
-  const model = process.env.LLM_MODEL;
+  const base = env.LLM_BASE_URL;
+  const key = env.LLM_API_KEY;
+  const model = env.LLM_MODEL;
   if (!base || !model) return { content: null, error: null };
 
   const evidence = facts
@@ -483,7 +484,7 @@ async function callLLM(
   ];
 
   const controller = new AbortController();
-  const timeoutMs = Number(process.env.ASK_LLM_TIMEOUT_MS ?? "8000");
+  const timeoutMs = Number(env.ASK_LLM_TIMEOUT_MS ?? "8000");
   const timeout = setTimeout(
     () => controller.abort(),
     Number.isFinite(timeoutMs) ? timeoutMs : 8000,
@@ -530,7 +531,10 @@ function json(statusCode: number, body: unknown) {
   };
 }
 
-export const askHandler = async (event: any) => {
+export const askHandler = async (
+  event: any,
+  env: Record<string, string | undefined> = {},
+) => {
   const started = Date.now();
   if (event.httpMethod !== "POST") {
     return json(405, { error: "method not allowed" });
@@ -593,7 +597,7 @@ export const askHandler = async (event: any) => {
   let mode: "extractive" | "llm" = "extractive";
   let fallbackReason: string | null = null;
 
-  const llm = await callLLM(question, lang, facts);
+  const llm = await callLLM(question, lang, facts, env);
   if (llm.content) {
     answer = llm.content;
     citations = facts.map((f, i) => ({
@@ -626,8 +630,8 @@ export const askHandler = async (event: any) => {
     answer_status: verified.stats.verified > 0 ? "answered" : "partial",
     mode,
     model: {
-      name: mode === "llm" ? process.env.LLM_MODEL ?? null : null,
-      base_url: mode === "llm" ? process.env.LLM_BASE_URL ?? null : null,
+      name: mode === "llm" ? env.LLM_MODEL ?? null : null,
+      base_url: mode === "llm" ? env.LLM_BASE_URL ?? null : null,
     },
     fallback_reason: fallbackReason,
     citations,

@@ -9,20 +9,20 @@
 | [`screenshots/`](screenshots/) | 桌面与移动端截图 |
 | [`SPEC.md`](SPEC.md) | 最初的产品规格（政策版），页面结构与契约仍被沿用 |
 
-## 部署（Vercel）
+## 部署（Cloudflare Pages）
 
-- 前端：Next.js 15 应用，**Vercel Root Directory = `web`**
-- 问答：Next Route `web/app/api/ask/route.ts`，对外 `/api/ask`；检索与引用校验核心在 `web/lib/ask-core.ts`
+- 前端：Next.js 静态导出（`output: "export"` → `web/out`），三语页面、十国档案、对比表
+- 问答：Cloudflare Pages Function `functions/api/ask.ts`，对外 `/api/ask`；检索与引用校验核心在 `web/lib/ask-core.ts`
 - 数据：`web/lib/ask-seed.json` 随函数打包；内容更新后需重新复制
-- 模型：在 Vercel 项目环境变量里设置 `LLM_BASE_URL` / `LLM_API_KEY` / `LLM_MODEL`，不设置则为抽取式
-- Hobby 计划函数上限约 10 秒，模型调用超时默认 8 秒，可用 `ASK_LLM_TIMEOUT_MS` 调整
+- 模型：在 Cloudflare Pages 项目环境变量里设置 `LLM_BASE_URL` / `LLM_API_KEY` / `LLM_MODEL`，不设置则为抽取式
+- 函数调用模型默认超时 8 秒，可用 `ASK_LLM_TIMEOUT_MS` 调整
 - 线上版不含：FastAPI 常驻服务、SQLite 快照存档、模型配置页；这些只在本地版提供
-- 部署：GitHub 导入 Vercel，Root Directory 选 `web`，Framework 自动识别 Next.js，直接 Deploy
+- 部署：Cloudflare Pages 导入 GitHub，Build command 填 `cd web && npm ci && npm run build`，Output directory 填 `web/out`
 
 ## 源码与上传
 
 - [`CODE_FILES.md`](CODE_FILES.md)：目录结构与关键文件说明
-- [`GITHUB_DEPLOY.md`](GITHUB_DEPLOY.md)：上传 GitHub、Vercel 导入配置
+- [`GITHUB_DEPLOY.md`](GITHUB_DEPLOY.md)：上传 GitHub、Cloudflare Pages 导入配置
 
 ## 快速开始
 
@@ -51,7 +51,7 @@ npm run dev     # http://127.0.0.1:3100/zh
 说明：
 
 - 网页端口 `3100` 对局域网开放；API 单独监听 `127.0.0.1:8100`，供本地脚本/开发使用
-- 线上版是 Next.js 应用 + `/api/ask` 路由，不依赖 FastAPI 常驻进程
+- 线上版是静态导出（`web/out`）+ Cloudflare Pages Function，不依赖 FastAPI 常驻进程
 - 启动后关闭那个黑色窗口不会停服务；需要停止时用停止脚本。
 - 换了 Wi-Fi 或 IP 变了，重新双击启动脚本即可生成新二维码。
 - 如果手机打不开：多半是 Wi-Fi 开了「客户端隔离 / AP 隔离」或用了访客网络。可改用**手机热点**（让电脑连手机热点）或 USB 网络共享；也可以让我配一条 Cloudflare 临时隧道拿公网地址。
@@ -59,7 +59,7 @@ npm run dev     # http://127.0.0.1:3100/zh
 
 ## 配置问答模型（可选）
 
-线上在 **Vercel → Project Settings → Environment Variables** 添加：
+线上在 **Cloudflare Pages → Settings → Environment variables** 添加：
 
 ```text
 LLM_BASE_URL=https://api.deepseek.com/v1
@@ -72,15 +72,13 @@ ASK_LLM_TIMEOUT_MS=8000
 
 ## 重新部署
 
-推送到 GitHub 后 Vercel 自动构建；也可以在 Vercel 项目的 **Deployments → Redeploy** 手动触发。
+推送到 GitHub 后 Cloudflare Pages 自动构建；也可以在 Pages 项目的 **Deployments** 里手动 Retry deployment。
 
 本地验证：
 
 ```bash
-npm run build        # 根目录执行，内部会 cd web && npm ci && npm run build
+cd web && npm ci && npm run build   # 输出 web/out
 ```
-
-如果升级到 Vercel Pro，可把 `web/app/api/ask/route.ts` 里的 `maxDuration` 从 10 调到 30，并同步提高 `ASK_LLM_TIMEOUT_MS`。
 
 ## 现在能做什么
 
@@ -88,7 +86,7 @@ npm run build        # 根目录执行，内部会 cd web && npm ci && npm run b
 - 风物对比、带引用问答（检索 → 生成 → 逐句校验）、可点开的风味速查（介绍 + 图片 + 来源）
 - 11 份来源：8 份官方/国际组织 + 3 份第三方；官方来源保留本地快照与 SHA-256 存档
 - 十国各有一张本地 SVG 旅行海报，首页使用同一套素材做背景
-- 未配置模型时走抽取式模板；线上配置 Vercel 环境变量 `LLM_*` 后自动改用模型
+- 未配置模型时走抽取式模板；线上配置 Cloudflare 环境变量 `LLM_*` 后自动改用模型
 
 ## 数据流
 
@@ -96,7 +94,7 @@ npm run build        # 根目录执行，内部会 cd web && npm ci && npm run b
 web/lib/data.ts --npm run export:seed--> server/seed.json
         --启动重建--> server/content.db --FastAPI--> 本地 web
 
-server/seed.json --copy--> web/lib/ask-seed.json --> Next Route /api/ask
+server/seed.json --copy--> web/lib/ask-seed.json --> Cloudflare Function /api/ask
 ```
 
 内容只在 `data.ts` 里改一处，导出后 API 与前端同时更新。
