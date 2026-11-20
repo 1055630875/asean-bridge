@@ -11,13 +11,13 @@
 
 ## 部署（Vercel）
 
-- 前端：Next.js 静态导出（`output: "export"` → `web/out`），三语页面、十国档案、对比表
-- 问答：Vercel Function `api/ask.ts`，对外路径 `/api/ask`；检索与引用校验核心在 `lib/ask-core.ts`
-- 数据：`lib/ask-seed.json` 随函数打包；内容更新后需重新复制
+- 前端：Next.js 15 应用，**Vercel Root Directory = `web`**
+- 问答：Next Route `web/app/api/ask/route.ts`，对外 `/api/ask`；检索与引用校验核心在 `web/lib/ask-core.ts`
+- 数据：`web/lib/ask-seed.json` 随函数打包；内容更新后需重新复制
 - 模型：在 Vercel 项目环境变量里设置 `LLM_BASE_URL` / `LLM_API_KEY` / `LLM_MODEL`，不设置则为抽取式
 - Hobby 计划函数上限约 10 秒，模型调用超时默认 8 秒，可用 `ASK_LLM_TIMEOUT_MS` 调整
 - 线上版不含：FastAPI 常驻服务、SQLite 快照存档、模型配置页；这些只在本地版提供
-- 部署：GitHub 导入 Vercel，`vercel.json` 已配置构建、静态输出、函数和根路径重定向
+- 部署：GitHub 导入 Vercel，Root Directory 选 `web`，Framework 自动识别 Next.js，直接 Deploy
 
 ## 源码与上传
 
@@ -51,7 +51,7 @@ npm run dev     # http://127.0.0.1:3100/zh
 说明：
 
 - 网页端口 `3100` 对局域网开放；API 单独监听 `127.0.0.1:8100`，供本地脚本/开发使用
-- 线上版是静态导出（`web/out`）+ Vercel Function，不依赖 FastAPI 常驻进程
+- 线上版是 Next.js 应用 + `/api/ask` 路由，不依赖 FastAPI 常驻进程
 - 启动后关闭那个黑色窗口不会停服务；需要停止时用停止脚本。
 - 换了 Wi-Fi 或 IP 变了，重新双击启动脚本即可生成新二维码。
 - 如果手机打不开：多半是 Wi-Fi 开了「客户端隔离 / AP 隔离」或用了访客网络。可改用**手机热点**（让电脑连手机热点）或 USB 网络共享；也可以让我配一条 Cloudflare 临时隧道拿公网地址。
@@ -80,7 +80,7 @@ ASK_LLM_TIMEOUT_MS=8000
 npm run build        # 根目录执行，内部会 cd web && npm ci && npm run build
 ```
 
-如果升级到 Vercel Pro，可把 `vercel.json` 里 `api/ask.ts` 的 `maxDuration` 从 10 调到 30，并同步提高 `ASK_LLM_TIMEOUT_MS`。
+如果升级到 Vercel Pro，可把 `web/app/api/ask/route.ts` 里的 `maxDuration` 从 10 调到 30，并同步提高 `ASK_LLM_TIMEOUT_MS`。
 
 ## 现在能做什么
 
@@ -96,7 +96,7 @@ npm run build        # 根目录执行，内部会 cd web && npm ci && npm run b
 web/lib/data.ts --npm run export:seed--> server/seed.json
         --启动重建--> server/content.db --FastAPI--> 本地 web
 
-server/seed.json --copy--> lib/ask-seed.json --> Vercel Function /api/ask
+server/seed.json --copy--> web/lib/ask-seed.json --> Next Route /api/ask
 ```
 
 内容只在 `data.ts` 里改一处，导出后 API 与前端同时更新。

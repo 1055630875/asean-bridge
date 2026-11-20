@@ -22,7 +22,7 @@ npm install
 npm run dev        # http://127.0.0.1:3100/zh
 ```
 
-生产构建：`npm run build`，静态产物在 `out/`。问答请求由根目录 `api/ask.ts`（Vercel Function）处理，不再反代本地 API。
+生产构建：`npm run build`，Vercel 使用 `.next` 输出；问答由 `app/api/ask/route.ts` 提供。
 
 ## 内容更新流程
 
@@ -39,20 +39,23 @@ npm run export:seed     # 2. 导出 server/seed.json
 
 ```
 web/
+├─ app/api/ask/route.ts        # /api/ask（Vercel Node 函数）
 ├─ app/[lang]/                 # zh / en / id
 │  ├─ page.tsx                 # 首页（Banner / 主题索引 / 十国 / 影像带 / 方法论）
 │  ├─ countries/               # 十国列表 + [code] 风物页
 │  ├─ compare/                 # 对比工作台（GET 参数，可分享）
-│  ├─ ask/                     # 问答（静态页 → /api/ask 函数）
+│  ├─ ask/                     # 问答页
 │  └─ sources/                 # 参考书目
 ├─ components/                 # Header / CountryIndex / CountryGallery / FlavorExplorer / AskClient
 ├─ lib/
+│  ├─ ask-core.ts              # 检索 + 抽取式/LLM + 引用校验
+│  ├─ ask-seed.json            # 函数打包内容快照
 │  ├─ i18n.ts                  # 三语字典
 │  └─ data.ts                  # 编辑内容源（导 seed 用）
 └─ scripts/export-seed.ts
 ```
 
-根目录还有两个平台文件：`api/ask.ts`（Vercel 入口）与 `lib/ask-core.ts` + `lib/ask-seed.json`（检索与校验核心）。
+Vercel 部署时把 **Root Directory** 设为 `web`，Framework 自动识别 Next.js。
 
 ## 问答链路
 

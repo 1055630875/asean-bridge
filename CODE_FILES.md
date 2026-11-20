@@ -4,15 +4,15 @@
 
 ```text
 .
-├─ web/                     Next.js 15 前端（静态导出）
-├─ api/ask.ts               Vercel Function 入口
-├─ lib/ask-core.ts          检索 + 抽取式/LLM + 引用校验（平台无关）
-├─ lib/ask-seed.json        函数打包用的内容快照
+├─ web/                     Next.js 15 应用（Vercel Root Directory）
+│  ├─ app/api/ask/          /api/ask Route Handler
+│  ├─ lib/ask-core.ts       检索 + 抽取式/LLM + 引用校验
+│  ├─ lib/ask-seed.json     函数打包用的内容快照
+│  └─ ...                   页面、组件、三语数据
 ├─ server/                  FastAPI + SQLite 本地内容服务（可选）
 ├─ scripts/start-all.ps1    Windows 本地启动器
 ├─ tools/                   海报与分享页生成脚本
 ├─ screenshots/             最终界面截图
-├─ vercel.json              Vercel 构建、函数与根路径重定向
 ├─ README.md                项目说明
 ├─ SPEC.md                  最初的产品规格（历史）
 └─ GITHUB_DEPLOY.md         上传 GitHub / 部署到 Vercel
@@ -38,9 +38,9 @@
 | `web/components/CompareForm.tsx` | 对比表单 |
 | `web/lib/data.ts` | 200 条事实、10 国、11 个来源 |
 | `web/lib/i18n.ts` | 中 / 英 / 印尼三语字典 |
-| `lib/ask-core.ts` | 检索 + 抽取式/LLM + 引用校验函数 |
-| `lib/ask-seed.json` | 函数打包用的内容快照 |
-| `api/ask.ts` | Vercel `/api/ask` 适配层 |
+| `web/lib/ask-core.ts` | 检索 + 抽取式/LLM + 引用校验函数 |
+| `web/lib/ask-seed.json` | 函数打包用的内容快照 |
+| `web/app/api/ask/route.ts` | `/api/ask` Route Handler |
 
 ## 本地运行
 
@@ -61,9 +61,9 @@ python -m venv .venv
 
 1. 改 `web/lib/data.ts` 或 `web/lib/i18n.ts`
 2. `cd web && npm run export:seed`
-3. 把 `server/seed.json` 复制到 `lib/ask-seed.json`
-4. 根目录执行 `npm run build`
-5. 推送到 GitHub，Vercel 自动部署 `web/out` + `api/ask.ts`
+3. 把 `server/seed.json` 复制到 `web/lib/ask-seed.json`
+4. `cd web && npm run build`
+5. 推送到 GitHub，Vercel 以 Root Directory `web` 自动部署
 
 ## 约束
 
