@@ -22,7 +22,7 @@ npm install
 npm run dev        # http://127.0.0.1:3100/zh
 ```
 
-生产构建：`npm run build`，静态产物在 `out/`；问答由仓库根目录 `functions/api/ask.ts` 提供。
+生产构建：`npm run build`，静态产物在 `out/`；问答由 `AskClient` 动态加载 `lib/ask-core.ts` 在浏览器内完成。
 
 ## 内容更新流程
 
@@ -54,7 +54,7 @@ web/
 └─ scripts/export-seed.ts
 ```
 
-Cloudflare Pages 构建时：Build command `cd web && npm ci && npm run build`，Build output `web/out`，Functions 使用仓库根目录的 `functions/`。
+GitHub Pages 构建时：`NEXT_PUBLIC_BASE_PATH=/asean-bridge npm run build`，静态产物 `out/` 由 `.github/workflows/pages.yml` 发布。
 
 ## 问答链路
 
@@ -70,4 +70,4 @@ Cloudflare Pages 构建时：Build command `cd web && npm ci && npm run build`�
 - 内容为编辑样例，评分是主观判断；页头有演示横幅。
 - 检索是关键词 + 规则，没有向量检索；事实超过千条后应上 embedding。
 - 11 份来源：8 份官方/国际组织 + 3 份第三方（菲律宾、老挝、缅甸）；第三方层级在页面标注。官方来源快照仅本地保存。
-- 无鉴权、限流、审核后台；admin 页在静态化时已移除，线上模型改走 Cloudflare 环境变量。
+- 无鉴权、限流、审核后台；admin 页在静态化时已移除，线上问答为浏览器内检索，不接模型。

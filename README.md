@@ -9,20 +9,19 @@
 | [`screenshots/`](screenshots/) | 桌面与移动端截图 |
 | [`SPEC.md`](SPEC.md) | 最初的产品规格（政策版），页面结构与契约仍被沿用 |
 
-## 部署（Cloudflare Pages）
+## 部署（GitHub Pages）
 
-- 前端：Next.js 静态导出（`output: "export"` → `web/out`），三语页面、十国档案、对比表
-- 问答：Cloudflare Pages Function `functions/api/ask.ts`，对外 `/api/ask`；检索与引用校验核心在 `web/lib/ask-core.ts`
-- 数据：`web/lib/ask-seed.json` 随函数打包；内容更新后需重新复制
-- 模型：在 Cloudflare Pages 项目环境变量里设置 `LLM_BASE_URL` / `LLM_API_KEY` / `LLM_MODEL`，不设置则为抽取式
-- 函数调用模型默认超时 8 秒，可用 `ASK_LLM_TIMEOUT_MS` 调整
-- 线上版不含：FastAPI 常驻服务、SQLite 快照存档、模型配置页；这些只在本地版提供
-- 部署：Cloudflare Pages 导入 GitHub，Build command 填 `cd web && npm ci && npm run build`，Output directory 填 `web/out`
+- 前端：Next.js 静态导出（`output: "export"` → `web/out`），带 `/asean-bridge` basePath
+- 问答：**浏览器内检索**，`web/lib/ask-core.ts` + `web/lib/ask-seed.json` 随页面加载；不调用外部 API
+- 引用：回答仍逐句校验，引用编号和来源侧栏保留
+- 限制：纯静态托管不能安全保存模型 Key，所以线上**不接 LLM**；本地 FastAPI 仍可用模型
+- 部署：`.github/workflows/pages.yml` 自动构建并发布，仓库 Settings → Pages → Source 选 GitHub Actions
+- 线上地址：`https://1055630875.github.io/asean-bridge/`
 
 ## 源码与上传
 
 - [`CODE_FILES.md`](CODE_FILES.md)：目录结构与关键文件说明
-- [`GITHUB_DEPLOY.md`](GITHUB_DEPLOY.md)：上传 GitHub、Cloudflare Pages 导入配置
+- [`GITHUB_DEPLOY.md`](GITHUB_DEPLOY.md)：上传 GitHub、开启 Pages 的步骤
 
 ## 快速开始
 
@@ -51,33 +50,34 @@ npm run dev     # http://127.0.0.1:3100/zh
 说明：
 
 - 网页端口 `3100` 对局域网开放；API 单独监听 `127.0.0.1:8100`，供本地脚本/开发使用
-- 线上版是静态导出（`web/out`）+ Cloudflare Pages Function，不依赖 FastAPI 常驻进程
+- 线上版是静态导出（`web/out`），问答在浏览器内完成，不依赖 FastAPI 常驻进程
 - 启动后关闭那个黑色窗口不会停服务；需要停止时用停止脚本。
 - 换了 Wi-Fi 或 IP 变了，重新双击启动脚本即可生成新二维码。
 - 如果手机打不开：多半是 Wi-Fi 开了「客户端隔离 / AP 隔离」或用了访客网络。可改用**手机热点**（让电脑连手机热点）或 USB 网络共享；也可以让我配一条 Cloudflare 临时隧道拿公网地址。
 - 当前没有登录与鉴权，不要在不可信的公共 Wi-Fi 上开放。
 
-## 配置问答模型（可选）
+## 问答说明
 
-线上在 **Cloudflare Pages → Settings → Environment variables** 添加：
+线上是纯静态站，问答由浏览器加载 `web/lib/ask-core.ts` 和 `web/lib/ask-seed.json` 后本地检索，因此：
 
-```text
-LLM_BASE_URL=https://api.deepseek.com/v1
-LLM_MODEL=deepseek-chat
-LLM_API_KEY=sk-...
-ASK_LLM_TIMEOUT_MS=8000
-```
-
-函数会在下一次请求时自动改用模型；不配置则使用抽取式回答。本地 FastAPI 也读取同名环境变量。
+- 不需要 API Key，也没有服务端费用
+- 回答只基于站内 200 条事实，引用编号可点开
+- 不调用 DeepSeek/OpenAI；需要模型时请在本地 FastAPI 版使用
 
 ## 重新部署
 
-推送到 GitHub 后 Cloudflare Pages 自动构建；也可以在 Pages 项目的 **Deployments** 里手动 Retry deployment。
+推送到 GitHub `main` 后，Actions 里的 **Deploy GitHub Pages** 会自动构建并发布。
 
 本地验证：
 
 ```bash
 cd web && npm ci && npm run build   # 输出 web/out
+```
+
+GitHub Pages 项目站点需要 basePath，本地模拟用：
+
+```bash
+cd web && NEXT_PUBLIC_BASE_PATH=/asean-bridge npm run build
 ```
 
 ## 现在能做什么
@@ -86,7 +86,7 @@ cd web && npm ci && npm run build   # 输出 web/out
 - 风物对比、带引用问答（检索 → 生成 → 逐句校验）、可点开的风味速查（介绍 + 图片 + 来源）
 - 11 份来源：8 份官方/国际组织 + 3 份第三方；官方来源保留本地快照与 SHA-256 存档
 - 十国各有一张本地 SVG 旅行海报，首页使用同一套素材做背景
-- 未配置模型时走抽取式模板；线上配置 Cloudflare 环境变量 `LLM_*` 后自动改用模型
+- 未配置模型时走抽取式模板；线上纯静态，不接模型
 
 ## 数据流
 
@@ -94,7 +94,7 @@ cd web && npm ci && npm run build   # 输出 web/out
 web/lib/data.ts --npm run export:seed--> server/seed.json
         --启动重建--> server/content.db --FastAPI--> 本地 web
 
-server/seed.json --copy--> web/lib/ask-seed.json --> Cloudflare Function /api/ask
+server/seed.json --copy--> web/lib/ask-seed.json --> 浏览器内检索
 ```
 
 内容只在 `data.ts` 里改一处，导出后 API 与前端同时更新。

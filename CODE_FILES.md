@@ -4,17 +4,18 @@
 
 ```text
 .
-├─ web/                     Next.js 15 前端（静态导出 → web/out）
-│  ├─ lib/ask-core.ts       检索 + 抽取式/LLM + 引用校验
-│  └─ lib/ask-seed.json     函数打包用的内容快照
-├─ functions/api/ask.ts     Cloudflare Pages Function
-├─ server/                  FastAPI + SQLite 本地内容服务（可选）
-├─ scripts/start-all.ps1    Windows 本地启动器
-├─ tools/                   海报与分享页生成脚本
-├─ screenshots/             最终界面截图
-├─ README.md                项目说明
-├─ SPEC.md                  最初的产品规格（历史）
-└─ GITHUB_DEPLOY.md         上传 GitHub / 部署到 Cloudflare Pages
+├─ web/                       Next.js 15 前端（静态导出 → web/out）
+│  ├─ lib/ask-core.ts         浏览器内检索 + 引用校验
+│  ├─ lib/ask-seed.json       问答内容快照
+│  └─ public/index.html       根路径跳转到 ./zh/
+├─ .github/workflows/pages.yml GitHub Pages 构建与发布
+├─ server/                    FastAPI + SQLite 本地内容服务（可选）
+├─ scripts/start-all.ps1      Windows 本地启动器
+├─ tools/                     海报与分享页生成脚本
+├─ screenshots/               最终界面截图
+├─ README.md                  项目说明
+├─ SPEC.md                    最初的产品规格（历史）
+└─ GITHUB_DEPLOY.md           上传 GitHub / 部署到 GitHub Pages
 ```
 
 ## 前端关键文件
@@ -37,9 +38,9 @@
 | `web/components/CompareForm.tsx` | 对比表单 |
 | `web/lib/data.ts` | 200 条事实、10 国、11 个来源 |
 | `web/lib/i18n.ts` | 中 / 英 / 印尼三语字典 |
-| `web/lib/ask-core.ts` | 检索 + 抽取式/LLM + 引用校验函数 |
-| `web/lib/ask-seed.json` | 函数打包用的内容快照 |
-| `functions/api/ask.ts` | Cloudflare Pages `/api/ask` 适配层 |
+| `web/lib/ask-core.ts` | 浏览器内检索 + 引用校验函数 |
+| `web/lib/ask-seed.json` | 问答内容快照 |
+| `.github/workflows/pages.yml` | GitHub Pages 自动构建与发布 |
 
 ## 本地运行
 
@@ -62,9 +63,9 @@ python -m venv .venv
 2. `cd web && npm run export:seed`
 3. 把 `server/seed.json` 复制到 `web/lib/ask-seed.json`
 4. `cd web && npm run build`，输出 `web/out`
-5. 推送到 GitHub，Cloudflare Pages 自动部署静态文件 + `functions/api/ask.ts`
+5. 推送到 GitHub，Actions 自动发布 GitHub Pages
 
 ## 约束
 
 - 无 `node_modules`、`.next`、`.venv`、SQLite、存档快照、API Key。
-- 线上问答不要在前端保存 Key；模型凭据只放 Cloudflare 环境变量。
+- 线上问答在浏览器内完成，不要放模型 Key。

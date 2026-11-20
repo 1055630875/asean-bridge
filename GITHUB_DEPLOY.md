@@ -1,4 +1,4 @@
-# 上传到 GitHub 并部署到 Cloudflare Pages
+# 上传到 GitHub 并部署到 GitHub Pages
 
 这个目录是清理后的源码，不含 `node_modules`、`.next`、`.venv`、SQLite 存档和本地二维码。
 
@@ -15,38 +15,43 @@ git push -u origin main
 
 或者用 GitHub Desktop：**Add local repository** → 选择本目录 → **Publish repository**。
 
-## 2. Cloudflare Pages 导入
+## 2. 开启 Pages
 
-**Cloudflare Dashboard → Workers & Pages → Create → Pages → Connect to Git**，选择仓库。
-
-构建配置：
+GitHub 仓库 → **Settings → Pages**：
 
 ```text
-Framework preset:    None
-Build command:       cd web && npm ci && npm run build
-Build output:        web/out
-Root directory:      /（留空）
-Functions directory: functions（默认，无需改）
+Build and deployment → Source: GitHub Actions
 ```
 
-`functions/api/ask.ts` 会自动成为 `/api/ask`，`web/public/_redirects` 负责 `/` → `/zh`。
-
-## 3. 环境变量（可选）
-
-**Pages → Settings → Environment variables**：
+仓库已经包含 `.github/workflows/pages.yml`，推送到 `main` 后会自动：
 
 ```text
-LLM_BASE_URL=https://api.deepseek.com/v1
-LLM_MODEL=deepseek-chat
-LLM_API_KEY=sk-...
-ASK_LLM_TIMEOUT_MS=8000
+cd web && npm ci && NEXT_PUBLIC_BASE_PATH=/asean-bridge npm run build
+上传 web/out → 发布 GitHub Pages
 ```
 
-不配置就使用抽取式回答，不会报错。
+仓库名必须是 `asean-bridge`，因为 workflow 和 `basePath` 都按这个路径配置。若改了仓库名，同步修改：
 
-## 4. 注意
+- `.github/workflows/pages.yml` 里的 `NEXT_PUBLIC_BASE_PATH`
+- `web/next.config.ts` 不需要改，它读取环境变量
 
-- 仓库里不要再放 `server/model_config.json` 或任何 API Key。
-- 本地验证：`cd web && npm ci && npm run build`，输出在 `web/out`。
-- 问答适配层只有 `functions/api/ask.ts`；检索与引用校验都在 `web/lib/ask-core.ts`。
-- `*.pages.dev` 在国内多数网络可访问；如果仍被拦截，可以在 Cloudflare Pages 里绑定自定义域名。
+## 3. 访问
+
+```text
+https://<你的用户名>.github.io/asean-bridge/
+```
+
+本项目对应：
+
+```text
+https://1055630875.github.io/asean-bridge/
+```
+
+根路径会自动跳到 `/zh/`。
+
+## 4. 说明
+
+- 纯静态站，问答在浏览器里检索 `web/lib/ask-seed.json`，不需要 API Key。
+- 不要在前端放模型 Key；线上不支持 LLM，本地 FastAPI 版可用。
+- 每次 push 到 `main` 自动重新构建；在 Actions 页面可以看日志。
+- 首次部署如果 Actions 报 `Get Pages site failed`，回到 Settings → Pages 确认 Source 已选 **GitHub Actions**。

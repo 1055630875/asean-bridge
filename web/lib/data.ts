@@ -176,7 +176,8 @@ export function getCountry(code: string): Country | undefined {
 }
 
 export function countryImage(code: string): string {
-  return `/images/${code.toUpperCase()}.svg`;
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  return `${basePath}/images/${code.toUpperCase()}.svg`;
 }
 
 /* ------------------------------------------------------------------ */

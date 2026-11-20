@@ -132,17 +132,18 @@ export function AskClient({
     let sentences = 0;
 
     try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 60000);
-      const res = await fetch("/api/ask", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question, lang }),
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
-      if (!res.ok) throw new Error(`api ${res.status}`);
-      const data = (await res.json()) as AskResponse;
+      const { askHandler } = await import("@/lib/ask-core");
+      const result = await askHandler(
+        {
+          httpMethod: "POST",
+          body: JSON.stringify({ question, lang }),
+        },
+        {},
+      );
+      if ((result.statusCode ?? 200) >= 400) {
+        throw new Error(`local ask ${result.statusCode}`);
+      }
+      const data = JSON.parse(result.body) as AskResponse;
       answer = data.answer_md;
       citations = data.citations ?? [];
       mode = data.mode;
