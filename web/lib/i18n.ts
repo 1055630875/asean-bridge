@@ -127,7 +127,7 @@ const zh = {
   "ask.greeting":
     "你好，我是东盟桥的风物助手。已接入本地内容库，可以问美食、景点、节庆与习俗；试试下面的示例。",
   "ask.demoNote":
-    "回答由本地内容 API 生成；未配置模型时为抽取式模板，并逐句校验引用。",
+    "回答由浏览器内的站内资料检索生成，并逐句校验引用。",
   "ask.error": "内容服务暂不可用，已切换到本地演示数据。",
   "ask.thinking": "正在翻资料、核对出处…",
   "ask.citations": "引用来源",
@@ -301,7 +301,7 @@ const en: Record<TextKey, string> = {
   "ask.greeting":
     "Hi, I’m the ASEAN Bridge assistant, connected to the local content API. Ask about food, places, festivals or etiquette — try a sample below.",
   "ask.demoNote":
-    "Answers come from the local content API; without a configured model it uses extractive templates with per-sentence citation checks.",
+    "Answers are generated in your browser from the site's own library, with per-sentence citation checks.",
   "ask.error": "The content service is unavailable; using local demo data.",
   "ask.thinking": "Checking the library and sources…",
   "ask.citations": "Citations",
@@ -472,7 +472,7 @@ const id: Record<TextKey, string> = {
   "ask.greeting":
     "Halo, saya asisten ASEAN Bridge yang terhubung ke API konten lokal. Tanyakan kuliner, tempat, festival, atau etiket — coba contoh di bawah.",
   "ask.demoNote":
-    "Jawaban dari API konten lokal; tanpa model, memakai templat ekstraktif dengan pemeriksaan kutipan per kalimat.",
+    "Jawaban dibuat di browser dari pustaka situs ini, dengan pemeriksaan kutipan per kalimat.",
   "ask.error": "Layanan konten tidak tersedia; memakai data demo lokal.",
   "ask.thinking": "Membuka pustaka dan memeriksa sumber…",
   "ask.citations": "Kutipan sumber",
