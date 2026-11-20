@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#082c2c"/>
+      <stop offset="62%" stop-color="#0f3d3e"/>
+      <stop offset="100%" stop-color="#e9a23b" stop-opacity="0.85"/>
+    </linearGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#082c2c" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#082c2c" stop-opacity="0.95"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#sky)"/>
+  <circle cx="880" cy="210" r="120" fill="#f4d9a0" opacity="0.9"/>
+  <circle cx="880" cy="210" r="160" fill="#f4d9a0" opacity="0.12"/>
+  <path d="M0 560 Q220 470 440 545 T880 520 T1200 555 L1200 800 L0 800 Z" fill="#082c2c" opacity="0.55"/>
+  <path d="M0 640 Q300 560 620 630 T1200 615 L1200 800 L0 800 Z" fill="#082c2c" opacity="0.8"/>
+  <g color="#f4d9a0" fill="#f4d9a0" transform="translate(330 260) scale(1.55)" opacity="0.96">
+    <polygon points="30,300 270,300 240,250 60,250"/><polygon points="65,250 235,250 210,205 90,205"/><polygon points="95,205 205,205 185,165 115,165"/><path d="M130 165 Q150 120 170 165 Z"/><circle cx="55" cy="262" r="12"/><circle cx="110" cy="262" r="12"/><circle cx="190" cy="262" r="12"/><circle cx="245" cy="262" r="12"/>
+  </g>
+  <rect y="560" width="1200" height="240" fill="url(#fade)"/>
+  <g font-family="Georgia, 'Times New Roman', serif" fill="#f4d9a0">
+    <text x="64" y="112" font-size="22" letter-spacing="8" opacity="0.72">ASEAN BRIDGE</text>
+    <text x="60" y="196" font-size="76" letter-spacing="2">INDONESIA</text>
+    <text x="64" y="238" font-size="20" letter-spacing="6" opacity="0.72">NUSANTARA</text>
+  </g>
+  <g font-family="Georgia, serif" fill="#f4d9a0">
+    <text x="64" y="704" font-size="20" letter-spacing="5" opacity="0.75">FOOD · PLACES · CULTURE</text>
+    <text x="1070" y="704" font-size="26" letter-spacing="4" opacity="0.9">ID</text>
+  </g>
+  <rect x="64" y="660" width="86" height="3" fill="#e9a23b"/>
+</svg>

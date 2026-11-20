@@ -1,0 +1,35 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js
+.next/
+out/
+
+# Netlify
+.netlify/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+server/archive/
+server/*.db
+server/model_config.json
+
+# env / secrets
+.env
+.env.*
+!.env.example
+
+# logs / generated
+logs/
+*.log
+手机访问.html
+公网访问.html
+share-qr.svg
+share-public.svg
+
+# OS
+.DS_Store
+Thumbs.db
