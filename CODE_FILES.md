@@ -8,7 +8,7 @@
 │  ├─ lib/ask-core.ts         浏览器内检索 + 引用校验
 │  ├─ lib/ask-seed.json       问答内容快照
 │  └─ public/index.html       根路径跳转到 ./zh/
-├─ .github/workflows/pages.yml GitHub Pages 构建与发布
+├─ docs/                      已构建的静态站（Pages 发布目录）
 ├─ server/                    FastAPI + SQLite 本地内容服务（可选）
 ├─ scripts/start-all.ps1      Windows 本地启动器
 ├─ tools/                     海报与分享页生成脚本
@@ -40,7 +40,7 @@
 | `web/lib/i18n.ts` | 中 / 英 / 印尼三语字典 |
 | `web/lib/ask-core.ts` | 浏览器内检索 + 引用校验函数 |
 | `web/lib/ask-seed.json` | 问答内容快照 |
-| `.github/workflows/pages.yml` | GitHub Pages 自动构建与发布 |
+| `docs/` | 构建产物，GitHub Pages 直接发布这个目录 |
 
 ## 本地运行
 
@@ -62,8 +62,9 @@ python -m venv .venv
 1. 改 `web/lib/data.ts` 或 `web/lib/i18n.ts`
 2. `cd web && npm run export:seed`
 3. 把 `server/seed.json` 复制到 `web/lib/ask-seed.json`
-4. `cd web && npm run build`，输出 `web/out`
-5. 推送到 GitHub，Actions 自动发布 GitHub Pages
+4. `NEXT_PUBLIC_BASE_PATH=/asean-bridge npm run build`，输出 `web/out`
+5. 用 `web/out` 替换根目录 `docs/`
+6. commit + push，GitHub Pages 自动发布 `docs/`
 
 ## 约束
 

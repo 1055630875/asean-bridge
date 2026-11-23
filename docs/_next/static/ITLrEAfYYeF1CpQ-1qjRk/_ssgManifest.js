@@ -1,0 +1,1 @@
+self.__SSG_MANIFEST=new Set(["\u002F[lang]","\u002F[lang]\u002Fask","\u002F[lang]\u002Fcompare","\u002F[lang]\u002Fcountries","\u002F[lang]\u002Fcountries\u002F[code]","\u002F[lang]\u002Fsources"]);self.__SSG_MANIFEST_CB&&self.__SSG_MANIFEST_CB()

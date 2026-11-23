@@ -54,7 +54,7 @@ web/
 └─ scripts/export-seed.ts
 ```
 
-GitHub Pages 构建时：`NEXT_PUBLIC_BASE_PATH=/asean-bridge npm run build`，静态产物 `out/` 由 `.github/workflows/pages.yml` 发布。
+GitHub Pages 构建时：`NEXT_PUBLIC_BASE_PATH=/asean-bridge npm run build`，把 `out/` 复制到仓库根目录 `docs/` 发布。
 
 ## 问答链路
 

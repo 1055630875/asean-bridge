@@ -11,11 +11,11 @@
 
 ## 部署（GitHub Pages）
 
-- 前端：Next.js 静态导出（`output: "export"` → `web/out`），带 `/asean-bridge` basePath
+- 前端：Next.js 静态导出（`output: "export"`），带 `/asean-bridge` basePath，构建产物提交到 `docs/`
 - 问答：**浏览器内检索**，`web/lib/ask-core.ts` + `web/lib/ask-seed.json` 随页面加载；不调用外部 API
 - 引用：回答仍逐句校验，引用编号和来源侧栏保留
 - 限制：纯静态托管不能安全保存模型 Key，所以线上**不接 LLM**；本地 FastAPI 仍可用模型
-- 部署：`.github/workflows/pages.yml` 自动构建并发布，仓库 Settings → Pages → Source 选 GitHub Actions
+- 部署：仓库 Settings → Pages → Source 选 **Deploy from a branch**，分支 `main`，目录 `/docs`
 - 线上地址：`https://1055630875.github.io/asean-bridge/`
 
 ## 源码与上传
@@ -64,21 +64,23 @@ npm run dev     # http://127.0.0.1:3100/zh
 - 回答只基于站内 200 条事实，引用编号可点开
 - 不调用 DeepSeek/OpenAI；需要模型时请在本地 FastAPI 版使用
 
-## 重新部署
-
-推送到 GitHub `main` 后，Actions 里的 **Deploy GitHub Pages** 会自动构建并发布。
-
-本地验证：
+## 更新网站
 
 ```bash
-cd web && npm ci && npm run build   # 输出 web/out
+cd web
+npm ci
+NEXT_PUBLIC_BASE_PATH=/asean-bridge npm run build
+# Windows PowerShell:
+# $env:NEXT_PUBLIC_BASE_PATH='/asean-bridge'; npm run build
+
+# 用构建产物替换 docs/
+cd ..
+rm -rf docs
+cp -r web/out docs
+touch docs/.nojekyll
 ```
 
-GitHub Pages 项目站点需要 basePath，本地模拟用：
-
-```bash
-cd web && NEXT_PUBLIC_BASE_PATH=/asean-bridge npm run build
-```
+然后 commit + push，GitHub Pages 会自动重新发布 `docs/`。
 
 ## 现在能做什么
 
