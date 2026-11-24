@@ -161,7 +161,7 @@ export default async function HomePage({
                 <figcaption className="flex items-center justify-between gap-3 border-t border-line px-4 py-3">
                   <span className="ed-caption">FIG. 01 — TH / THAILAND</span>
                   <span className="ed-caption text-muted/70">
-                    LOCAL SVG POSTER
+                    PHOTO · PIXABAY
                   </span>
                 </figcaption>
               </figure>
