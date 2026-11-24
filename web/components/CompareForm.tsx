@@ -1,6 +1,7 @@
 "use client";
 
 import { DOMAINS, COUNTRIES } from "@/lib/data";
+import { withBasePath } from "@/lib/base-path";
 import type { Lang } from "@/lib/i18n";
 
 export function CompareForm({
@@ -18,7 +19,7 @@ export function CompareForm({
 }) {
   return (
     <form
-      action={`/${lang}/compare`}
+      action={withBasePath(`/${lang}/compare`)}
       method="get"
       className="mt-6 grid gap-4 border-y border-line py-4 sm:grid-cols-[1.2fr_1fr_1fr_auto] sm:items-end"
     >

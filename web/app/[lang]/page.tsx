@@ -10,6 +10,7 @@ import { DomainGlyph } from "@/components/DomainGlyph";
 import { CountryGallery } from "@/components/CountryGallery";
 import { CountryIndex } from "@/components/CountryIndex";
 import { isLang, t } from "@/lib/i18n";
+import { withBasePath } from "@/lib/base-path";
 import {
   DOMAINS,
   computeVerdict,
@@ -97,7 +98,7 @@ export default async function HomePage({
               </p>
 
               <form
-                action={`/${lang}/ask`}
+                action={withBasePath(`/${lang}/ask`)}
                 method="get"
                 className="ed-search mt-8 flex max-w-xl items-end gap-3 pb-2"
               >
