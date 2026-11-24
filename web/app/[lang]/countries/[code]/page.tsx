@@ -12,6 +12,7 @@ import {
   COUNTRIES,
   DOMAINS,
   FACTS,
+  countryDomainImage,
   countryImage,
   factsFor,
   getCountry,
@@ -99,6 +100,13 @@ export default async function CountryPage({
       };
     }),
   }));
+
+  const domainImages = Object.fromEntries(
+    DOMAINS.map((domain) => [
+      domain.code,
+      countryDomainImage(country.code, domain.code),
+    ]),
+  );
 
   const stats = [
     {
@@ -335,6 +343,7 @@ export default async function CountryPage({
                 countryName={country.name[lang]}
                 intro={country.blurb[lang]}
                 image={countryImage(country.code)}
+                domainImages={domainImages}
                 domains={flavorDomains}
               />
             </div>

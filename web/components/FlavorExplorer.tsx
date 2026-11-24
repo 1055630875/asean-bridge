@@ -86,12 +86,14 @@ export function FlavorExplorer({
   countryName,
   intro,
   image,
+  domainImages,
   domains,
 }: {
   lang: Lang;
   countryName: string;
   intro: string;
   image: string;
+  domainImages: Record<string, string>;
   domains: FlavorDomain[];
 }) {
   const [active, setActive] = useState<Active | null>(null);
@@ -176,8 +178,8 @@ export function FlavorExplorer({
             </button>
 
             <img
-              src={image}
-              alt={countryName}
+              src={domainImages[active.domainCode] ?? image}
+              alt={`${countryName} · ${active.domain}`}
               className="aspect-[3/2] w-full border-b border-line object-cover"
             />
 

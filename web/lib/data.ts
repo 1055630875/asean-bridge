@@ -180,6 +180,12 @@ export function countryImage(code: string): string {
   return `${basePath}/images/${code.toUpperCase()}.jpg`;
 }
 
+export function countryDomainImage(code: string, domain: string): string {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  const suffix = domain === "places" ? "" : `-${domain}`;
+  return `${basePath}/images/${code.toUpperCase()}${suffix}.jpg`;
+}
+
 /* ------------------------------------------------------------------ */
 /* Themes and comparable rows                                          */
 /* ------------------------------------------------------------------ */

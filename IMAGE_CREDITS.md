@@ -15,6 +15,18 @@
 | 老挝 | `LA.jpg` | 琅勃拉邦寺庙 | 2561537 | [CDN](https://cdn.pixabay.com/photo/2017/07/31/22/10/luang-prabang-2561537_1280.jpg) |
 | 缅甸 | `MM.jpg` | 蒲甘日出 | 2083640 | [CDN](https://cdn.pixabay.com/photo/2017/02/20/19/11/myanmar-2083640_1280.jpg) |
 
+## 风味速查主题图
+
+每个国家另有 3 张主题图，共 30 张，全部来自 Pixabay：
+
+```text
+<CODE>-food.jpg      代表菜 / 饮食
+<CODE>-culture.jpg   节庆 / 舞蹈 / 寺院
+<CODE>-travel.jpg    街市 / 交通 / 水系
+```
+
+例如 `TH-food.jpg` 是泰式炒河粉，`TH-culture.jpg` 是泼水节，`TH-travel.jpg` 是突突车。它们与 `docs/` 一起发布，弹窗按当前主题选择。
+
 ## 替换图片
 
 1. 准备 3:2 横图，建议 1280×853 或更大。
